@@ -81,16 +81,26 @@ def _generate_synthetic_german_credit(path: str) -> None:
     rng = np.random.default_rng(42)
     n = 1000
 
-    # Categorical columns — simulate integer-coded categories matching UCI ranges
-    cat_ranges = {
-        "checking_account": 4, "credit_history": 5, "purpose": 11,
-        "savings_account": 5, "employment": 5, "personal_status": 5,
-        "other_debtors": 3, "property": 4, "other_installments": 3,
-        "housing": 3, "job": 4, "telephone": 2, "foreign_worker": 2,
+    # Categorical columns — use real UCI attribute codes (e.g. A11, A32, A143)
+    cat_codes: dict[str, list[str]] = {
+        "checking_account":  ["A11", "A12", "A13", "A14"],
+        "credit_history":    ["A30", "A31", "A32", "A33", "A34"],
+        "purpose":           ["A40", "A41", "A42", "A43", "A44",
+                              "A45", "A46", "A47", "A48", "A49", "A410"],
+        "savings_account":   ["A61", "A62", "A63", "A64", "A65"],
+        "employment":        ["A71", "A72", "A73", "A74", "A75"],
+        "personal_status":   ["A91", "A92", "A93", "A94", "A95"],
+        "other_debtors":     ["A101", "A102", "A103"],
+        "property":          ["A121", "A122", "A123", "A124"],
+        "other_installments":["A141", "A142", "A143"],
+        "housing":           ["A151", "A152", "A153"],
+        "job":               ["A171", "A172", "A173", "A174"],
+        "telephone":         ["A191", "A192"],
+        "foreign_worker":    ["A201", "A202"],
     }
     data: dict[str, np.ndarray] = {}
-    for col, n_cats in cat_ranges.items():
-        data[col] = rng.integers(0, n_cats, size=n)
+    for col, codes in cat_codes.items():
+        data[col] = rng.choice(codes, size=n)
 
     # Numerical columns — approximate UCI distributions
     data["duration"]         = rng.integers(4, 72, size=n)
